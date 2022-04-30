@@ -1,0 +1,167 @@
+.container {
+  padding: 0 1rem;
+}
+
+.main {
+  min-height: 100vh;
+  padding: 1rem 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: top;
+  align-items: center;
+}
+
+.footer {
+  display: flex;
+  flex: 1;
+  padding: 2rem 0;
+  border-top: 1px solid #eaeaea;
+  justify-content: center;
+  align-items: center;
+}
+
+.footer a {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-grow: 1;
+}
+
+.title a {
+  color: #0070f3;
+  text-decoration: none;
+}
+
+.title a:hover,
+.title a:focus,
+.title a:active {
+  text-decoration: underline;
+}
+
+.title {
+  margin: 0;
+  line-height: 1.15;
+  font-size: 4rem;
+}
+
+.title,
+.description {
+  text-align: center;
+}
+
+.description {
+  margin: 4rem 0;
+  line-height: 1.5;
+  font-size: 1.5rem;
+}
+
+.mainInputContainer {
+  margin: 1.5rem 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mainInputWrapper {
+  margin: 1em;
+  padding: 1em;
+}
+
+.addPlayerButton {
+  background-color: #4CAF50; /* Green */
+  border: none;
+  color: white;
+  padding: 8px 16px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  cursor: pointer;
+  margin-bottom: 32px;
+}
+
+.deletePlayerButton {
+  background-color: #ab3232; /* Green */
+  border: none;
+  color: white;
+  padding: 6px;
+  text-align: center;
+  text-decoration: none;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.addBuyInButton {
+  background-color: #2eb5de; /* Green */
+  border: none;
+  color: white;
+  padding: 8px 16px;
+  text-align: center;
+  text-decoration: none;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.inputLabel {
+  margin: 0 0 1rem 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.inputField {
+  border: 0;
+  border-bottom: 2px solid #efefef;
+  outline: 0;
+  font-size: 1.3rem;
+  color: black;
+  padding: 7px 0;
+  background: transparent;
+}
+
+.tableInputField {
+  text-align: center;
+  border: 0;
+  border-bottom: 2px solid rgba(0,0,0,0);
+  outline: 0;
+  font-size: 1rem;
+  color: black;
+  padding: 3px 0;
+  background: transparent;
+}
+
+.tableInputField:focus {
+  border-color: rgb(48, 108, 239);
+}
+
+.tableTr:nth-child(even){background-color: #f2f2f2;} 
+
+.tableTd {
+  padding: 8px;
+}
+
+.playersTableWrapper {
+  width: 70%;
+}
+
+.playersTable {
+  margin: 0 auto;
+  margin-bottom: 64px;
+}
+
+.errorsWell {
+  background-color: rgb(255, 192, 192);
+  width: 80%;
+  padding: 16px;
+}
+
+@media (max-width: 600px) {
+  .mainInputContainer {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .playersTableWrapper {
+    width: 100%;
+  }
+}
