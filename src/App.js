@@ -1,20 +1,27 @@
 import React from 'react'
 import styles from './styles/Home.module.css'
 
+const defaultState = {
+  buyInValue: 200,
+  buyInAmount: 50,
+  players: []
+}
+
 export default class App extends React.Component {
   constructor(props) {
     super(props)
 
     this.state = {
-      buyInValue: 200, // Amount of chips
-      buyInAmount: 50, // Dollar amount
-      players: []
+      buyInValue: parseInt(localStorage.getItem('buyInValue')) || defaultState['buyInValue'], // Amount of chips
+      buyInAmount: parseInt(localStorage.getItem('buyInAmount')) || defaultState['buyInAmount'], // Dollar amount
+      players: JSON.parse(localStorage.getItem('players')) || defaultState['players']
     }
 
     this.addNewPlayer = this.addNewPlayer.bind(this)
     this.updateStateField = this.updateStateField.bind(this)
     this.deletePlayer = this.deletePlayer.bind(this)
     this.updatePlayerRecord = this.updatePlayerRecord.bind(this)
+    this.clearAllState = this.clearAllState.bind(this)
   }
 
   blankPlayer() {
@@ -28,13 +35,23 @@ export default class App extends React.Component {
     }
   }
 
+  clearAllState() {
+    if(!window.confirm(`Are you sure you want to clear all current data?`))return;
+
+    this.setState(defaultState, () => { localStorage.clear() })
+  }
+
   updateStateField(event) {
     const newValue = event.target.value;
     const fieldName = event.target.name;
 
     this.setState({
       [fieldName]: newValue
-    })
+    }, () => { localStorage.setItem(fieldName, newValue) })
+  }
+
+  updatePlayersStorage() {
+    localStorage.setItem('players', JSON.stringify(this.state.players))
   }
 
   deletePlayer(player) {
@@ -46,7 +63,7 @@ export default class App extends React.Component {
         return arrayPlayer.id === player.id;
     }), 1);
 
-    this.setState({players: players})
+    this.setState({ players: players }, this.updatePlayersStorage)
   }
 
   addPlayerBuyIn(player) {
@@ -61,7 +78,7 @@ export default class App extends React.Component {
         return arrayPlayer.id === player.id;
     }), 1);
 
-    this.setState({players: [...players, player]})
+    this.setState({players: [...players, player]}, this.updatePlayersStorage)
   }
 
   updatePlayerField(player, event) {
@@ -80,7 +97,7 @@ export default class App extends React.Component {
   }
 
   addNewPlayer() {
-    this.setState(previous => ({players: [...previous.players, this.blankPlayer()]}))
+    this.setState(previous => ({players: [...previous.players, this.blankPlayer()]}), this.updatePlayersStorage)
   }
 
   calculateBalance(player) {
@@ -161,12 +178,12 @@ export default class App extends React.Component {
           <div className={styles.mainInputContainer}>
             <div className={styles.mainInputWrapper}>
               <div className={styles.inputLabel}>Buy In Amount ($)</div>
-              <input type={'number'} onChange={this.updateStateField} defaultValue={this.state.buyInAmount} name='buyInAmount' className={styles.inputField} />
+              <input type={'number'} onChange={this.updateStateField} value={this.state.buyInAmount} name='buyInAmount' className={styles.inputField} />
             </div>
 
             <div className={styles.mainInputWrapper}>
               <div className={styles.inputLabel}>Value in Chips</div>
-              <input type={'number'} onChange={this.updateStateField} defaultValue={this.state.buyInValue} name='buyInValue' className={styles.inputField} />
+              <input type={'number'} onChange={this.updateStateField} value={this.state.buyInValue} name='buyInValue' className={styles.inputField} />
             </div>
           </div>
 
@@ -175,6 +192,12 @@ export default class App extends React.Component {
           {this.playersTable()}
 
           {this.errorsWell()}
+
+          <br />
+          <br />
+          <br />
+
+          <button onClick={this.clearAllState} className={styles.clearAllButton}>Clear All</button>
         </main>
 
         <footer className={styles.footer}>
