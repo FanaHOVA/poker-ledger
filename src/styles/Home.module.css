@@ -75,7 +75,18 @@
   padding: 8px 16px;
   text-align: center;
   text-decoration: none;
-  display: inline-block;
+  font-size: 16px;
+  cursor: pointer;
+  margin-bottom: 32px;
+}
+
+.clearAllButton {
+  background-color: #ab3232; /* Red */
+  border: none;
+  color: white;
+  padding: 8px 16px;
+  text-align: center;
+  text-decoration: none;
   font-size: 16px;
   cursor: pointer;
   margin-bottom: 32px;
