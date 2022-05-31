@@ -1,5 +1,26 @@
+html, body {
+  width: 100%;
+  background: linear-gradient(-45deg, #ee7752, #e397b4, #5abbde, #23d5ab);
+    background-size: 400% 400%;
+    animation: gradient 15s ease infinite;
+    height: 100vh;  
+}
+
 .container {
+  width: 100%;
   padding: 0 1rem;
+}
+
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 .main {
@@ -26,6 +47,13 @@
   justify-content: center;
   align-items: center;
   flex-grow: 1;
+  color: black;
+  text-decoration: none;
+  font-weight: 700;
+
+  &:hover {
+    color: white;
+  }
 }
 
 .title a {
@@ -68,56 +96,11 @@
   padding: 1em;
 }
 
-.addPlayerButton {
-  background-color: #4CAF50; /* Green */
-  border: none;
-  color: white;
-  padding: 8px 16px;
-  text-align: center;
-  text-decoration: none;
-  font-size: 16px;
-  cursor: pointer;
-  margin-bottom: 32px;
-}
-
-.clearAllButton {
-  background-color: #ab3232; /* Red */
-  border: none;
-  color: white;
-  padding: 8px 16px;
-  text-align: center;
-  text-decoration: none;
-  font-size: 16px;
-  cursor: pointer;
-  margin-bottom: 32px;
-}
-
-.deletePlayerButton {
-  background-color: #ab3232; /* Green */
-  border: none;
-  color: white;
-  padding: 6px;
-  text-align: center;
-  text-decoration: none;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.addBuyInButton {
-  background-color: #2eb5de; /* Green */
-  border: none;
-  color: white;
-  padding: 8px 16px;
-  text-align: center;
-  text-decoration: none;
-  font-size: 12px;
-  cursor: pointer;
-}
-
 .inputLabel {
   margin: 0 0 1rem 0;
   font-size: 1.5rem;
   font-weight: 700;
+  text-align: center;
 }
 
 .inputField {
@@ -128,6 +111,7 @@
   color: black;
   padding: 7px 0;
   background: transparent;
+  text-align: center;
 }
 
 .tableInputField {
@@ -141,11 +125,16 @@
   background: transparent;
 }
 
+.tableInputField:hover {
+  border-color: rgb(201, 213, 240);
+}
+
 .tableInputField:focus {
   border-color: rgb(48, 108, 239);
 }
 
-.tableTr:nth-child(even){background-color: #f2f2f2;} 
+.tableTr:nth-child(even){background-color: #f6f5f5;} 
+.tableTr:nth-child(odd){background-color: #e2efe7;} 
 
 .tableTd {
   padding: 8px;
@@ -157,7 +146,25 @@
 
 .playersTable {
   margin: 0 auto;
+  border-collapse: collapse;
   margin-bottom: 64px;
+  background: white;
+  box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.176);
+
+  thead {
+    tr:first-child {
+      background: linear-gradient(-45deg, #4CAF50, #23d573);
+      
+      th {
+        padding: 12px 8px;
+      }
+    }
+  }
+  
+  th {
+    margin: 0;
+    border-spacing: 0px;
+  }
 }
 
 .errorsWell {
@@ -167,6 +174,10 @@
 }
 
 @media (max-width: 600px) {
+  .main {
+    width: 100%;
+  }
+
   .mainInputContainer {
     width: 100%;
     flex-direction: column;
@@ -174,5 +185,9 @@
 
   .playersTableWrapper {
     width: 100%;
+  }
+
+  .title {
+    font-size: 2rem;
   }
 }

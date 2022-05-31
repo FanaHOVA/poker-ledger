@@ -1,0 +1,116 @@
+// Button variable should be darker than front
+
+$green-button: #2f8b32;
+$green-front: #4CAF50;
+
+$red-button: #ab3232;
+$red-front: #cf4545;
+
+$grey-button: #676767;
+$grey-front: #808080;
+
+$blue-button: #2595b7;
+$blue-front: #2eb5de;
+
+.pushable {
+  background: hsl(340deg 100% 32%);
+  display: inline-block;
+  border-radius: 12px;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  outline-offset: 4px;
+}
+
+.front {
+  display: block;
+  padding: 12px 42px;
+  border-radius: 12px;
+  font-size: 1.25rem;
+  background: hsl(345deg 100% 47%);
+  color: white;
+  transform: translateY(-6px);
+}
+
+.pushable:active .front {
+  transform: translateY(-2px);
+}
+
+.addPlayerButton {
+  @extend .pushable;
+  background-color: $green-button;
+  margin-bottom: 32px;
+}
+
+.addPlayerFront {
+  @extend .front;
+  background-color: $green-front;
+}
+
+.clearAllButton {
+  @extend .pushable;
+  background-color: $red-button;
+}
+
+.clearAllFront {
+  @extend .front;
+  background-color: $red-front;
+}
+
+.disabledButton {
+  @extend .pushable;
+  background-color: $grey-button;
+}
+
+.disabledFront {
+  @extend .front;
+  background-color: $grey-front;
+}
+
+.small-pushable {
+  background: hsl(340deg 100% 32%);
+  display: inline-block;
+  border-radius: 12px;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  outline-offset: 4px;
+}
+
+.small-front {
+  display: block;
+  padding: 12px 42px;
+  border-radius: 12px;
+  font-size: 1.25rem;
+  background: hsl(345deg 100% 47%);
+  color: white;
+  transform: translateY(-6px);
+}
+
+.deletePlayerButton {
+  background-color: $red-front; /* Green */
+  border: none;
+  color: white;
+  padding: 6px;
+  text-align: center;
+  text-decoration: none;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.addBuyInButton {
+  background-color: $blue-front; /* Green */
+  border: none;
+  color: white;
+  padding: 8px 16px;
+  text-align: center;
+  text-decoration: none;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.bottomButtons {
+  button {
+    margin-right: 32px;
+  }
+}

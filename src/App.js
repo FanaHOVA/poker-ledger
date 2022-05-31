@@ -1,5 +1,7 @@
 import React from 'react'
-import styles from './styles/Home.module.css'
+import styles from './styles/Home.module.scss'
+import buttonStyles from './styles/Buttons.module.scss'
+import { groupBy } from 'lodash';
 
 const defaultState = {
   buyInValue: 200,
@@ -14,7 +16,8 @@ export default class App extends React.Component {
     this.state = {
       buyInValue: parseInt(localStorage.getItem('buyInValue')) || defaultState['buyInValue'], // Amount of chips
       buyInAmount: parseInt(localStorage.getItem('buyInAmount')) || defaultState['buyInAmount'], // Dollar amount
-      players: JSON.parse(localStorage.getItem('players')) || defaultState['players']
+      players: JSON.parse(localStorage.getItem('players')) || defaultState['players'],
+      payingOut: false
     }
 
     this.addNewPlayer = this.addNewPlayer.bind(this)
@@ -22,6 +25,7 @@ export default class App extends React.Component {
     this.deletePlayer = this.deletePlayer.bind(this)
     this.updatePlayerRecord = this.updatePlayerRecord.bind(this)
     this.clearAllState = this.clearAllState.bind(this)
+    this.proceedToPayment = this.proceedToPayment.bind(this)
   }
 
   blankPlayer() {
@@ -55,6 +59,11 @@ export default class App extends React.Component {
   }
 
   deletePlayer(player) {
+    if (!this.calculateBalance(player) == 0) {
+      alert("Player's balance is not zero, you cannot delete the player.")
+      return
+    } 
+
     if(!window.confirm(`Are you sure you want to delete player ${player.name}?`))return;
 
     let players = this.state.players;
@@ -68,6 +77,8 @@ export default class App extends React.Component {
 
   addPlayerBuyIn(player) {
     player.buyIns = player.buyIns + 1
+    player.chips = player.chips + this.state.buyInValue
+
     this.updatePlayerRecord(player)
   }
 
@@ -130,8 +141,55 @@ export default class App extends React.Component {
     }
   }
 
+  proceedToPayment() {
+    this.setState({payingOut: true})
+  }
+
+  paymentInstructions() {
+    if (!this.state.payingOut) { return <React.Fragment />}
+
+    const playersByBalance = groupBy(this.state.players, (p) => this.calculateBalance(p))
+
+    return (
+      <div className={styles.playersTableWrapper}>
+        <p>Players are grouped by amount in order to take advantage of Venmo's multi-recipient requests!</p>
+
+        {Object.keys(playersByBalance).map((balance) => {
+          const playersAtBalance = playersByBalance[balance];
+          const playersNames = playersAtBalance.map((p) => p.name).join(', ')
+          const playersPaymentMethods = playersAtBalance.map((p) => p.paymentMethod).join(',')
+
+          const venmoUrl = `venmo://paycharge?txn=${balance > 0 ? 'pay' : 'charge'}&recipients=${playersPaymentMethods}&amount=${Math.abs(balance)}&note=${'Your final balance: $' + balance}`
+
+          const string = balance > 0 ? 
+            `Pay $${balance} to ${playersNames}` :
+            `Request $${balance * -1} from ${playersNames}`
+
+          // The `groupBy` transforms the int into a string, better to check against a string than `==` on 0 as it'd match nil
+          if (balance === '0') {
+            return (
+              <div style={{marginBottom: '32px'}}>
+                <button disabled={true} className={buttonStyles.disabledButton}>
+                  <span className={buttonStyles.disabledFront}>{playersNames} broke even</span>
+                </button>
+              </div>
+            )
+          }
+
+          return (
+            <div style={{marginBottom: '32px'}}>
+              <button onClick={() => window.open(venmoUrl, '_blank')} className={balance > 0 ? buttonStyles.addPlayerButton : buttonStyles.clearAllButton}>
+                <span className={balance > 0 ? buttonStyles.addPlayerFront : buttonStyles.clearAllFront}>{string}</span>
+              </button>
+            </div>
+          )
+        })}
+      </div>
+    )
+  }
+
   playersTable() {
-    if (this.state.players.length === 0) { return <React.Fragment />}
+    if (this.state.players.length === 0 || this.state.payingOut) { return <React.Fragment />}
 
     return (
       <div className={styles.playersTableWrapper}>
@@ -142,7 +200,7 @@ export default class App extends React.Component {
                   <th>Venmo / Wallet</th>
                   <th>Buy Ins</th>
                   <th>Stack Size</th>
-                  <th>$ Balance</th>
+                  <th>Balance</th>
                   <th />
                   <th />
                 </tr>
@@ -156,8 +214,8 @@ export default class App extends React.Component {
                       <td className={styles.tableTd}>{this.playerField('buyIns', 'number', player)}</td>
                       <td className={styles.tableTd}>{this.playerField('chips', 'number', player)}</td>
                       <td className={styles.tableTd}>${this.calculateBalance(player)}</td>
-                      <td className={styles.addBuyInButton} onClick={() => this.addPlayerBuyIn(player)}>Add Buy In</td>
-                      <td className={styles.deletePlayerButton} onClick={() => this.deletePlayer(player)}>Delete Player</td>
+                      <td className={buttonStyles.addBuyInButton} onClick={() => this.addPlayerBuyIn(player)}>+1 Buy-In</td>
+                      <td className={buttonStyles.deletePlayerButton} onClick={() => this.deletePlayer(player)}>Delete Player</td>
                     </tr>
                   )
                 })}
@@ -167,15 +225,12 @@ export default class App extends React.Component {
     )
   }
 
-  render() {
-    return (
-      <div className={styles.container}>
-        <main className={styles.main}>
-          <h1 className={styles.title}>
-            Home Game Poker Ledger
-          </h1>
+  settingsPane() {
+    if (this.state.payingOut) { return <React.Fragment />}
 
-          <div className={styles.mainInputContainer}>
+    return (
+      <React.Fragment>
+        <div className={styles.mainInputContainer}>
             <div className={styles.mainInputWrapper}>
               <div className={styles.inputLabel}>Buy In Amount ($)</div>
               <input type={'number'} onChange={this.updateStateField} value={this.state.buyInAmount} name='buyInAmount' className={styles.inputField} />
@@ -187,9 +242,25 @@ export default class App extends React.Component {
             </div>
           </div>
 
-          <button onClick={this.addNewPlayer} className={styles.addPlayerButton}>Add New Player</button>
+          <button onClick={this.addNewPlayer} className={buttonStyles.addPlayerButton}>
+            <span className={buttonStyles.addPlayerFront}>Add New Player</span>
+          </button>
+      </React.Fragment>
+    )
+  }
+
+  render() {
+    return (
+      <div className={styles.container}>
+        <main className={styles.main}>
+          <h1 className={styles.title}>
+            Home Game Poker Ledger
+          </h1>
+
+          {this.settingsPane()}
 
           {this.playersTable()}
+          {this.paymentInstructions()}
 
           {this.errorsWell()}
 
@@ -197,16 +268,30 @@ export default class App extends React.Component {
           <br />
           <br />
 
-          <button onClick={this.clearAllState} className={styles.clearAllButton}>Clear All</button>
+          <div className={buttonStyles.bottomButtons}>
+            <button onClick={() => { this.setState({payingOut: !this.state.payingOut}) }} 
+                    className={buttonStyles.addPlayerButton}>
+              <span className={buttonStyles.addPlayerFront}>
+                {this.state.payingOut ? 'Back to players editing' : 'Finish Game & Pay Out'}
+              </span>
+            </button>
+
+            {this.state.payingOut ? 
+              <React.Fragment /> : 
+              <button onClick={this.clearAllState} className={buttonStyles.clearAllButton}>
+                <span className={buttonStyles.clearAllFront}>Clear All</span>
+              </button>
+            }
+          </div>
         </main>
 
         <footer className={styles.footer}>
           <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
+            href="https://twitter.com/fanahova"
             target="_blank"
             rel="noopener noreferrer"
           >
-            Powered by fanahova.eth
+            @fanahova.eth
           </a>
         </footer>
       </div>
